@@ -79,3 +79,7 @@ class DistanceTestCase(TestCase):
 
         addDistance(phone, station1, 50)
         self.assertEqual(findItemsRoom("Phone").name, "Bedroom")
+
+        station2 = addStation("Station #2", addRoom("Bathroom"))
+        addDistance(phone, station2, 10)
+        self.assertEqual(findItemsRoom("Phone").name, "Bathroom")
