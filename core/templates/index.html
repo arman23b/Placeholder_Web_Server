@@ -7,10 +7,42 @@
 
 <div class="container">
 
-  <div class="jumbotron text-center">
-    <h1>Welcome!</h1>
-    <p>Your new Django project, {{projectName}}, is ready for development.</p>
-  </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Rooms</th>
+                <th>Stations</th>
+                <th>Items</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <div class="column">
+                        {% for room in rooms %}
+                            <p>{{ room.name }}</p>
+                        {% endfor %}
+                    </div>
+                    <button id="addRoomButton" class="btn btn-default">Add room</button>
+                </td>
+                <td>
+                    <div class="column">
+                        {% for station in stations %}
+                            <p>{{ station.name }}</p>
+                        {% endfor %}
+                    </div>
+                    <button id="addStationButton" class="btn btn-default">Add station</button>
+                </td>
+                <td>
+                    <div class="column">
+                        {% for item in items %}
+                            <p>{{ item.name }}</p>
+                        {% endfor %}
+                    </div>
+                    <button id="addItemButton" class="btn btn-default">Add item</button>
+                </td>
+            </tr>
+    </table>
     
 
 </div><!-- /.container -->

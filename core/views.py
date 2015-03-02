@@ -9,9 +9,12 @@ from django.utils import timezone
 
 
 def index(request):
-    data = {'projectName': 'placeholder',
-            'successMessage': "Great success!"}
-    return render_to_response("index.html", data, context_instance=RequestContext(request))
+    data = {}
+    data["rooms"] = getAllRooms()
+    data["stations"] = getAllStations()
+    data["items"] = getAllItems()
+    return render_to_response("index.html", data, 
+                              context_instance=RequestContext(request))
 
 
 ###################
