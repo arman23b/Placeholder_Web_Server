@@ -29,6 +29,7 @@ class Station(models.Model):
     name = models.CharField(max_length=200)
     room = models.ForeignKey(Room, null=True)
     pollingFrequency = models.CharField(max_length=200, null=True)
+    ipAddress = models.CharField(max_length=200, default="0.0.0.0")
 
     def __unicode__(self):
         return self.name

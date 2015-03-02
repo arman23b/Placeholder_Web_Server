@@ -1,9 +1,10 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from core.models import *
 from django.shortcuts import get_object_or_404, render_to_response, redirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.template import RequestContext
 from django import forms
+
 
 from django.utils import timezone
 
@@ -90,7 +91,7 @@ def getAllItems():
 
 
 def getAllItemsInRoom(room):
-    return room.item_set.all()
+    return room.item.objects.all()
 
 
 def addDistance(item, station, dist):
@@ -120,3 +121,12 @@ def findItemsRoom(itemName):
             return closestStation.room
     except ObjectDoesNotExist:
         print "Item %s doesn't exist" % itemName
+
+def pollStations():
+    stations = getAllStations()
+    for station in stations:
+        items = getAllItemsInRoom(station.room)
+        for item in items:
+            updateItemsRoom(item.name, station.room)
+    return False
+
