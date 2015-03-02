@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404, render_to_response, redirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.template import RequestContext
 from django import forms
+import requests
 
 
 from django.utils import timezone
@@ -14,7 +15,7 @@ def index(request):
     data["rooms"] = getAllRooms()
     data["stations"] = getAllStations()
     data["items"] = getAllItems()
-    return render_to_response("index.html", data, 
+    return render_to_response("index.html", data,
                               context_instance=RequestContext(request))
 
 
@@ -125,11 +126,23 @@ def findItemsRoom(itemName):
     except ObjectDoesNotExist:
         print "Item %s doesn't exist" % itemName
 
-def pollStations():
+def getInfoFromStations():
     stations = getAllStations()
     for station in stations:
         items = getAllItemsInRoom(station.room)
         for item in items:
             updateItemsRoom(item.name, station.room)
     return False
+
+
+# poll stations with get request then parse response
+# response comes in as JSON
+def pollStations():
+    stations = getAllStations()
+    for station in stations:
+        res = requests.get(station.ipAddress)
+        # TODO parse JSON response
+        for item in res:
+            updateItemsRoom(item.name, station.room)
+    return True
 
