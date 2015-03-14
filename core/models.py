@@ -13,26 +13,28 @@ class Room(models.Model):
 
 
 class Item(models.Model):
-    name = models.CharField(max_length=200)
-    beaconId = models.CharField(max_length=200)
+    beaconId = models.CharField(max_length=200, primary_key=True)
+    registered = models.BooleanField(default=False)
+    name = models.CharField(max_length=200, null=True)
     room = models.ForeignKey(Room, null=True)
     activationTime = models.DateTimeField(null=True)
 
     def __unicode__(self):
-        return self.name
+        return self.beaconId
 
     class Meta:
         db_table = "item"
 
 
 class Station(models.Model):
+    ipAddress = models.CharField(max_length=200, primary_key=True)
+    registered = models.BooleanField(default=False)
     name = models.CharField(max_length=200)
     room = models.ForeignKey(Room, null=True)
     pollingFrequency = models.CharField(max_length=200, null=True)
-    ipAddress = models.CharField(max_length=200, default="0.0.0.0")
 
     def __unicode__(self):
-        return self.name
+        return self.ipAddress
 
     class Meta:
         db_table = "station"
@@ -44,7 +46,7 @@ class Distance(models.Model):
     dist = models.IntegerField()
 
     def __unicode__(self):
-        return "(%s, %s, %d)" % (self.item.name, self.station.name, self.distance)
+        return "(%s, st%s, %d)" % (self.item.beaconId, self.station.ipAddress, self.dist)
 
     class Meta:
         db_table = "distance"

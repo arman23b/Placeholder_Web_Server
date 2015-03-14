@@ -2,49 +2,101 @@
 
 {% block body %}
 
-{% include "header.html" %}
-{% load input_type %}
-
 <div class="container">
+    <h1 class="header text"> Placeholder </h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Rooms</th>
-                <th>Stations</th>
-                <th>Items</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>
-                    <div class="column">
-                        {% for room in rooms %}
-                            <p>{{ room.name }}</p>
-                        {% endfor %}
-                    </div>
-                    <button id="addRoomButton" class="btn btn-default">Add room</button>
-                </td>
-                <td>
-                    <div class="column">
-                        {% for station in stations %}
-                            <p>{{ station.name }}</p>
-                        {% endfor %}
-                    </div>
-                    <button id="addStationButton" class="btn btn-default">Add station</button>
-                </td>
-                <td>
-                    <div class="column">
-                        {% for item in items %}
-                            <p>{{ item.name }}</p>
-                        {% endfor %}
-                    </div>
-                    <button id="addItemButton" class="btn btn-default">Add item</button>
-                </td>
-            </tr>
-    </table>
-    
+    <div class="row section">
 
-</div><!-- /.container -->
+        <table class="u-full-width">
+            <thead>
+                <tr>
+                    <th class="four columns text title">
+                        Rooms &nbsp; <span class="glyphicon glyphicon-plus" id="newRoomOpenDialog"></span>
+                    </th>
+                    <th class="four columns text title">
+                        Stations &nbsp; <span class="glyphicon glyphicon-plus" id="newStationOpenDialog"></span>
+                    </th>
+                    <th class="four columns text title">
+                        Items &nbsp; <span class="glyphicon glyphicon-plus" id="newItemOpenDialog"></span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="four columns no-boarder">
+                        <ul class="popover-list" id="rooms-list">
+                            {% for room in rooms %}
+                            <li class="popover-item">
+                                <a class="text-link">{{ room.name }}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td class="four columns no-boarder">
+                        <ul class="popover-list" id="stations-list">
+                            {% for station in stations %}
+                            <li class="popover-item">
+                                <a class="text-link">
+                                    <div class="name">{{ station.name }}</div>
+                                    <div class="info ipAddress">{{ station.ipAddress }}</div>
+                                    <div class="info">&nbsp; | &nbsp;</div>
+                                    <div class="info station-room">{{ station.room.name }}</div>
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td class="four columns no-boarder">
+                        <ul class="popover-list" id="items-list">
+                            {% for item in items %}
+                            <li class="popover-item">
+                                <a class="text-link">
+                                    <div class="name">{{ item.name }}</div>
+                                    <div class="info beaconId">{{ item.beaconId }}</div>
+                                    <div class="info">&nbsp; | &nbsp;</div>
+                                    <div class="info item-room">{{ item.room.name }}</div>
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
-{% endblock %} <!-- /body -->
+    </div>
+
+
+    <div class="row section">
+
+        <table class="u-full-width">
+            <thead>
+                <tr>
+                    <th class="four columns no-boarder"></th>
+                    <th class="four columns title text">Unregistered Stations</th>
+                    <th class="four columns title text">Unregistered Items</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="four columns no-boarder"></td>
+                    <td class="four columns no-boarder">
+                        <ul class="popover-list" id="unregisteredStations-list">
+                        </ul>
+                    </td>
+                    <td class="four columns no-boarder unregistered-items">
+                        <ul class="popover-list" id="unregisteredItems-list">
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    {% include "dialogs.html" %}
+
+
+</div>
+
+{% endblock %}

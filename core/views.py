@@ -4,8 +4,7 @@ from django.shortcuts import get_object_or_404, render_to_response, redirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.template import RequestContext
 from django import forms
-import requests
-
+import requests, json
 
 from django.utils import timezone
 
@@ -13,15 +12,121 @@ from django.utils import timezone
 def index(request):
     data = {}
     data["rooms"] = getAllRooms()
-    data["stations"] = getAllStations()
-    data["items"] = getAllItems()
+    data["stations"] = getRegisteredStations()
+    data["items"] = getRegisteredItems()
     return render_to_response("index.html", data,
                               context_instance=RequestContext(request))
+
+
+def loadUnregistered(request):
+    if request.method == "POST":
+        response = {}
+        unregisteredStations = createStationsArray(getUnregisteredStations())
+        unregisteredItems = createItemsArray(getUnregisteredItems())
+        response["unregisteredIpAddresses"] = unregisteredStations
+        response["unregisteredBeaconIds"] = unregisteredItems
+        return HttpResponse(json.dumps(response), 
+                            content_type="application-json")
+
+
+def newData(request):
+    if request.method == "POST":
+        ipAddress = getIpAddress(request)
+        station = addStation(ipAddress)
+                
+        data = request.POST["data"]
+        dataDict = json.loads(data)
+        for beaconId in dataDict.keys():
+            item = addItem(beaconId)
+            distance = int(dataDict[beaconId])
+            addDistance(item, station, distance)
+            item.room = findItemsRoom(beaconId)
+            item.save()
+
+    return HttpResponse("")
+
+
+def addRoomView(request):
+    response = {}
+    if request.method == "POST":
+        roomName = request.POST["name"]
+        addRoom(roomName)
+        return HttpResponse(json.dumps(response), 
+                            content_type="application-json")
+
+
+def addStationView(request):
+    response = {}
+    if request.method == "POST":
+        stationName = request.POST["name"]
+        stationIp = request.POST["ip"]
+        roomName = request.POST["room"]
+        room = Room.objects.get(name=roomName)
+        addStation(stationIp)
+        registerStation(stationIp, stationName, room)
+        return HttpResponse(json.dumps(response), 
+                            content_type="application-json")
+
+
+def addItemView(request):
+    response = {}
+    if request.method == "POST":
+        itemBeaconId = request.POST["beaconId"]
+        itemName = request.POST["name"]
+        item = addItem(itemBeaconId)
+        registerItem(itemBeaconId, itemName)
+        if item.room:
+            response["room"] = item.room.name
+        else:
+            response["room"] = "unknown"
+        return HttpResponse(json.dumps(response), 
+                            content_type="application-json")
+
+
+def getStationsForRoomView(request):
+    response = {}
+    if request.method == "POST":
+        roomName = request.POST["name"]
+        try:
+            room = Room.objects.get(name=roomName)
+            stations = room.station_set.all()
+            response["result"] = 1
+            response["stations"] = createStationsArray(stations)
+        except ObjectDoesNotExist:
+            response["result"] = 0
+        return HttpResponse(json.dumps(response), 
+                            content_type="application-json")
 
 
 ###################
 ##### HELPERS #####
 ###################
+
+
+def getIpAddress(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+
+def createStationsArray(stations):
+    arr = []
+    for station in stations:
+        arr.append({ "ipAddress" : station.ipAddress })
+    return arr
+
+
+def createItemsArray(items):
+    arr = []
+    for item in items:
+        if item.room:
+            arr.append({ "beaconId" : item.beaconId, "room" : item.room.name })
+        else:
+            arr.append({ "beaconId" : item.beaconId })
+    return arr
 
 def addRoom(name):
     try:
@@ -36,23 +141,30 @@ def getAllRooms():
     return Room.objects.all()
 
 
-def addStation(name, room, pollingFrequency=None):
+def addStation(ipAddress):
     try:
-        station = Station.objects.get(name=name)
-        station.room = room
-        station.pollingFrequency = pollingFrequency
-        station.save()
-        return station
+        return Station.objects.get(ipAddress=ipAddress)
     except ObjectDoesNotExist:
-        new_station = Station.objects.create(name=name,
-                                             room=room,
-                                             pollingFrequency=pollingFrequency)
-        new_station.save()
-        return new_station
+        return Station.objects.create(ipAddress=ipAddress)
 
 
-def getAllStations():
-    return Station.objects.all()
+def registerStation(ipAddress, name, room, pollingFrequency=None):
+    try:
+        station = Station.objects.get(ipAddress=ipAddress)
+        station.registered = True
+        station.name = name
+        station.room = room
+        station.save()
+    except ObjectDoesNotExist:
+        print "Register Error: Station %s does not exist" % ipAddress
+
+
+def getRegisteredStations():
+    return Station.objects.filter(registered=True)
+
+
+def getUnregisteredStations():
+    return Station.objects.filter(registered=False)
 
 
 def updateStation(name, room, pollingFrequency=None):
@@ -66,18 +178,30 @@ def updateStation(name, room, pollingFrequency=None):
         print "%s station does not exist" % name
 
 
-def addItem(name, beaconId):
+def addItem(beaconId):
     try:
-        item = Item.objects.get(name=name)
-        item.beaconId = beaconId
-        item.save()
-        return item
+        return Item.objects.get(beaconId=beaconId)
     except ObjectDoesNotExist:
-        new_item = Item.objects.create(name=name,
-                                       beaconId=beaconId,
-                                       activationTime=timezone.now())
-        new_item.save()
-        return new_item
+        return Item.objects.create(beaconId=beaconId,
+                                   activationTime=timezone.now())
+
+
+def registerItem(beaconId, name):
+    try:
+        item = Item.objects.get(beaconId=beaconId)
+        item.registered = True
+        item.name = name
+        item.save()
+    except ObjectDoesNotExist:
+        print "Register Error: Item %s does not exist" % beaconId
+
+
+def getRegisteredItems():
+    return Item.objects.filter(registered=True)
+
+
+def getUnregisteredItems():
+    return Item.objects.filter(registered=False)
 
 
 def updateItemsRoom(name, room):
@@ -112,10 +236,10 @@ def addDistance(item, station, dist):
         return new_distance
 
 
-def findItemsRoom(itemName):
+def findItemsRoom(beaconId):
     # Find the closest station's room
     try:
-        item = Item.objects.get(name=itemName)
+        item = Item.objects.get(beaconId=beaconId)
         distances = Distance.objects.filter(item=item)
         orderedDistances = distances.order_by('dist')
         if len(orderedDistances) == 0:
@@ -124,7 +248,8 @@ def findItemsRoom(itemName):
             closestStation = orderedDistances[0].station
             return closestStation.room
     except ObjectDoesNotExist:
-        print "Item %s doesn't exist" % itemName
+        print "Item %s doesn't exist" % beaconId
+
 
 def getInfoFromStations():
     stations = getAllStations()
