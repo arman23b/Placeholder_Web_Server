@@ -27,7 +27,7 @@ class Item(models.Model):
 
 
 class Station(models.Model):
-    ipAddress = models.CharField(max_length=200, primary_key=True)
+    ipAddress = models.CharField(max_length=200)
     registered = models.BooleanField(default=False)
     name = models.CharField(max_length=200)
     room = models.ForeignKey(Room, null=True)

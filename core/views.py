@@ -4,9 +4,13 @@ from django.shortcuts import get_object_or_404, render_to_response, redirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.template import RequestContext
 from django import forms
-import requests, json
+import requests, json, urllib2
+
 
 from django.utils import timezone
+
+STATION_PORT = '8000'
+SET_STATION_ID_ROUTE = '/set-id'
 
 
 def index(request):
@@ -25,7 +29,7 @@ def loadUnregistered(request):
         unregisteredItems = createItemsArray(getUnregisteredItems())
         response["unregisteredIpAddresses"] = unregisteredStations
         response["unregisteredBeaconIds"] = unregisteredItems
-        return HttpResponse(json.dumps(response), 
+        return HttpResponse(json.dumps(response),
                             content_type="application-json")
 
 
@@ -33,7 +37,7 @@ def newData(request):
     if request.method == "POST":
         ipAddress = getIpAddress(request)
         station = addStation(ipAddress)
-                
+
         data = request.POST["data"]
         dataDict = json.loads(data)
         for beaconId in dataDict.keys():
@@ -51,7 +55,7 @@ def addRoomView(request):
     if request.method == "POST":
         roomName = request.POST["name"]
         addRoom(roomName)
-        return HttpResponse(json.dumps(response), 
+        return HttpResponse(json.dumps(response),
                             content_type="application-json")
 
 
@@ -59,12 +63,16 @@ def addStationView(request):
     response = {}
     if request.method == "POST":
         stationName = request.POST["name"]
-        stationIp = request.POST["ip"]
+        stationIP = request.POST["ip"]
         roomName = request.POST["room"]
         room = Room.objects.get(name=roomName)
-        addStation(stationIp)
-        registerStation(stationIp, stationName, room)
-        return HttpResponse(json.dumps(response), 
+        station = addStation(stationIP)
+        id = station.id
+        registerStation(stationIP, stationName, room)
+        reqURL = stationIP + ':' + STATION_PORT + SET_STATION_ID_ROUTE
+        idParam = 'id=' + str(id)
+        urllib2.urlopen(reqURL, idParam)
+        return HttpResponse(json.dumps(response),
                             content_type="application-json")
 
 
@@ -79,7 +87,7 @@ def addItemView(request):
             response["room"] = item.room.name
         else:
             response["room"] = "unknown"
-        return HttpResponse(json.dumps(response), 
+        return HttpResponse(json.dumps(response),
                             content_type="application-json")
 
 
@@ -94,7 +102,7 @@ def getStationsForRoomView(request):
             response["stations"] = createStationsArray(stations)
         except ObjectDoesNotExist:
             response["result"] = 0
-        return HttpResponse(json.dumps(response), 
+        return HttpResponse(json.dumps(response),
                             content_type="application-json")
 
 
