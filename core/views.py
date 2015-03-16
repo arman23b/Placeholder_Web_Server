@@ -10,7 +10,7 @@ import requests, json, urllib2
 from django.utils import timezone
 
 STATION_PORT = '8000'
-SET_STATION_ID_ROUTE = '/set-id'
+SET_STATION_ID_ROUTE = 'set-id'
 
 
 def index(request):
@@ -36,7 +36,10 @@ def loadUnregistered(request):
 def newData(request):
     if request.method == "POST":
         ipAddress = getIpAddress(request)
-        station = addStation(ipAddress)
+        if "id" in request.POST:
+            station = Station.objects.get(id=int(request.POST["id"]))
+        else:
+            station = addStation(ipAddress)
 
         data = request.POST["data"]
         dataDict = json.loads(data)
@@ -67,11 +70,8 @@ def addStationView(request):
         roomName = request.POST["room"]
         room = Room.objects.get(name=roomName)
         station = addStation(stationIP)
-        id = station.id
         registerStation(stationIP, stationName, room)
-        reqURL = stationIP + ':' + STATION_PORT + SET_STATION_ID_ROUTE
-        idParam = 'id=' + str(id)
-        urllib2.urlopen(reqURL, idParam)
+        sendIdToStation(station)
         return HttpResponse(json.dumps(response),
                             content_type="application-json")
 
@@ -109,6 +109,13 @@ def getStationsForRoomView(request):
 ###################
 ##### HELPERS #####
 ###################
+
+
+def sendIdToStation(station):
+    reqURL = "http://%s:%s/%s" % (station.ipAddress, STATION_PORT, SET_STATION_ID_ROUTE)
+    post = { "data" : json.dumps({ "id" : str(station.id) }) }
+    requests.post(reqURL, data=post)
+    return 
 
 
 def getIpAddress(request):
