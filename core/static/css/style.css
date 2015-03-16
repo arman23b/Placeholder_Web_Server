@@ -15,7 +15,7 @@
 
 .header {
     margin-top: 3rem;
-    text-align: center; 
+    text-align: center;
     border-bottom: 3px solid #eee;
     padding: 2rem 0;
     font-size: 3.0rem;
@@ -59,21 +59,21 @@ div.form {
 .glyphicon {
     cursor: move;
 }
-    
+
 .popover-list {
     padding: 0;
     margin: 0;
-    list-style: none; 
+    list-style: none;
 }
 
 .popover-item {
     padding: 0;
     margin: 0;
-    cursor: move; 
+    cursor: move;
 }
 
 .popover-item:first-child .popover-link {
-    border-radius: 4px 4px 0 0; 
+    border-radius: 4px 4px 0 0;
 }
 
 .popover-item:last-child .popover-link {
@@ -83,10 +83,14 @@ div.form {
 
 .text-link:hover {
     color: #fff;
-    background: #33C3F0; 
+    background: #33C3F0;
 }
 
 .text:hover,
 .popover-item:first-child .text-link:hover:after {
-    border-bottom-color: #33C3F0; 
+    border-bottom-color: #33C3F0;
+}
+
+input:invalid {
+  border:1px solid red;
 }

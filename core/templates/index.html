@@ -6,10 +6,11 @@
     <h1 class="header text"> Placeholder </h1>
 
     <div class="row section" align="center">
-      <form action="/updatePollingFreq" method="post">
-        Polling Frequency: <input type="text" name="pollFreq" placeholder={{ pollingFrequency }}>
+      <div class="form">
+        Polling Frequency: <input type="number" pattern='[0-9]{10}' id="newPollFreq" placeholder={{ pollingFrequency }}>
         <input class="button-primary" type="submit" id="setPollFreq" value="Save">
-      </form>
+      </div>
+
         <table class="u-full-width">
             <thead>
                 <tr>

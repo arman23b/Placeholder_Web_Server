@@ -3,11 +3,40 @@ $(document).ready(function () {
     addRoomListener();
     addStationListener();
     addItemListener();
-
+    addPollFreqListener();
     addLoadingUnregistered();
 
 });
 
+
+function addPollFreqListener() {
+    $( "#pollFreq-dialog" ).dialog({
+        autoOpen: false,
+        modal: true,
+        closeOnEscape: true,
+        close: function(ev, ui) {location.reload(true);}
+    });
+    $("#setPollFreq").click(function () {
+        var newPollFreq = $("#newPollFreq").val();
+        if (newPollFreq != "") {
+          updatePollFreq(newPollFreq);
+          $("#pollFreq-dialog").dialog("open");
+        }
+    });
+}
+
+function updatePollFreq(newPollFreq) {
+  $.ajax({
+    'url': 'updatePollingFreq',
+    'type': 'POST',
+    'data': {pollFreq: newPollFreq},
+    'success': function(data) {
+    },
+    'error': function() {
+        console.error("Error");
+    }
+  });
+}
 
 function addRoomListener() {
     $( "#room-dialog" ).dialog({
@@ -30,7 +59,7 @@ function addNewRoom(newRoomName) {
     var ul = $("#rooms-list");
     ul.append("<li class='popover-item'><a class='text-link'>" + newRoomName + "</a></li>");
     $.ajax({
-        'url': 'addRoom', 
+        'url': 'addRoom',
         'type': 'POST',
         'dataType': 'json',
         'data': { name : newRoomName },
@@ -71,7 +100,7 @@ function addNewStation(name, ip, room) {
     var ul = $("#stations-list");
     appendNewStation(ul, name, ip, room);
     $.ajax({
-        'url': 'addStation', 
+        'url': 'addStation',
         'type': 'POST',
         'dataType': 'json',
         'data': { name : name, ip : ip, room : room },
@@ -111,7 +140,7 @@ function addNewItem(name, beaconId, room) {
     var ul = $("#items-list");
     appendNewItem(ul, name, beaconId, room);
     $.ajax({
-        'url': 'addItem', 
+        'url': 'addItem',
         'type': 'POST',
         'dataType': 'json',
         'data': { name : name, beaconId : beaconId },
@@ -127,7 +156,7 @@ function addNewItem(name, beaconId, room) {
 function addLoadingUnregistered() {
     setInterval(function () {
         $.ajax({
-            'url': 'loadUnregistered', 
+            'url': 'loadUnregistered',
             'type': 'POST',
             'dataType': 'json',
             'data': {},
@@ -140,7 +169,7 @@ function addLoadingUnregistered() {
             'error': function() {
                 console.error("Error");
             }
-        }); 
+        });
     }, 5000);
 }
 
@@ -188,11 +217,11 @@ function removeElementFromList(element, list, className) {
 function appendNewStation(ul, name, ip, room) {
     ul.append('<li class="popover-item">' +
         '<a class="text-link unregistered-station">' +
-        '<div class="name">' + name + '</div>' + 
-        '<div class="info ipAddress">' + ip + '</div>' + 
-        '<div class="info">&nbsp; | &nbsp;</div>' + 
-        '<div class="info station-room">' + room + '</div>' + 
-        '</a>' + 
+        '<div class="name">' + name + '</div>' +
+        '<div class="info ipAddress">' + ip + '</div>' +
+        '<div class="info">&nbsp; | &nbsp;</div>' +
+        '<div class="info station-room">' + room + '</div>' +
+        '</a>' +
         '</li>');
 }
 
@@ -200,10 +229,10 @@ function appendNewStation(ul, name, ip, room) {
 function appendNewItem(ul, name, beaconId, room) {
     ul.append('<li class="popover-item">' +
         '<a class="text-link unregistered-item">' +
-        '<div class="name">' + name + '</div>' + 
-        '<div class="info beaconId">' + beaconId + '</div>' + 
-        '<div class="info">&nbsp; | &nbsp;</div>' + 
-        '<div class="info item-room">' + room + '</div>' + 
-        '</a>' + 
+        '<div class="name">' + name + '</div>' +
+        '<div class="info beaconId">' + beaconId + '</div>' +
+        '<div class="info">&nbsp; | &nbsp;</div>' +
+        '<div class="info item-room">' + room + '</div>' +
+        '</a>' +
         '</li>');
 }

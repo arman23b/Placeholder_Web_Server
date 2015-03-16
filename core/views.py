@@ -109,14 +109,16 @@ def getStationsForRoomView(request):
 
 def updatePollingFreq(request):
   response = {}
+  if request.method == "GET":
+    return index(request)
   if request.method == "POST":
     newPollFreq = request.POST["pollFreq"]
     stations = getRegisteredStations()
     for station in stations:
       updateStation(station.name, station.room, newPollFreq)
     response["pollingFrequency"] = newPollFreq
-  return index(request)
-
+    return HttpResponse(json.dumps(response),
+                            content_type="application-json")
 
 ###################
 ##### HELPERS #####
