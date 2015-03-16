@@ -5,8 +5,11 @@
 <div class="container">
     <h1 class="header text"> Placeholder </h1>
 
-    <div class="row section">
-
+    <div class="row section" align="center">
+      <form action="/updatePollingFreq" method="post">
+        Polling Frequency: <input type="text" name="pollFreq" placeholder={{ pollingFrequency }}>
+        <input class="button-primary" type="submit" id="setPollFreq" value="Save">
+      </form>
         <table class="u-full-width">
             <thead>
                 <tr>

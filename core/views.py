@@ -18,6 +18,7 @@ def index(request):
     data["rooms"] = getAllRooms()
     data["stations"] = getRegisteredStations()
     data["items"] = getRegisteredItems()
+    data["pollingFrequency"] = getPollingFreq()
     return render_to_response("index.html", data,
                               context_instance=RequestContext(request))
 
@@ -106,6 +107,17 @@ def getStationsForRoomView(request):
                             content_type="application-json")
 
 
+def updatePollingFreq(request):
+  response = {}
+  if request.method == "POST":
+    newPollFreq = request.POST["pollFreq"]
+    stations = getRegisteredStations()
+    for station in stations:
+      updateStation(station.name, station.room, newPollFreq)
+    response["pollingFrequency"] = newPollFreq
+  return index(request)
+
+
 ###################
 ##### HELPERS #####
 ###################
@@ -115,7 +127,7 @@ def sendIdToStation(station):
     reqURL = "http://%s:%s/%s" % (station.ipAddress, STATION_PORT, SET_STATION_ID_ROUTE)
     post = { "data" : json.dumps({ "id" : str(station.id) }) }
     requests.post(reqURL, data=post)
-    return 
+    return
 
 
 def getIpAddress(request):
@@ -286,3 +298,10 @@ def pollStations():
             updateItemsRoom(item.name, station.room)
     return True
 
+
+def getPollingFreq():
+  stations = getRegisteredStations()
+  if len(stations) > 0:
+    return stations[0].pollingFrequency
+  else:
+    return 9600
