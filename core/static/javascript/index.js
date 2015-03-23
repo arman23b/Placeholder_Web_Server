@@ -200,6 +200,7 @@ function updateUnregisteredItems(beaconIds) {
         $("#newItemBeaconId").val(beaconId);
         var room = $(this).find(".item-room").html();
         $("#newItemRoom").val(room);
+        $("")
     });
 }
 
@@ -233,6 +234,23 @@ function appendNewItem(ul, name, beaconId, room) {
         '<div class="info beaconId">' + beaconId + '</div>' +
         '<div class="info">&nbsp; | &nbsp;</div>' +
         '<div class="info item-room">' + room + '</div>' +
+        '<div class="info searchItemBtn"><button class="btn btn-xs">Search</button>' +
         '</a>' +
         '</li>');
 }
+
+/*function addRoomListener() {
+    $( "#room-dialog" ).dialog({
+        autoOpen: false,
+        modal: true
+    });
+    $("#newRoomOpenDialog").click(function () {
+        $("#room-dialog").dialog("open");
+    });
+    $("#newRoomButton").click(function () {
+        var newRoomName = $("#newRoomName").val().toLowerCase();
+        if (newRoomName != "") addNewRoom(newRoomName);
+        $("#newRoomName").val("");
+        $("#room-dialog").dialog("close");
+    });
+}*/

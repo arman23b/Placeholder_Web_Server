@@ -94,3 +94,8 @@ div.form {
 input:invalid {
   border:1px solid red;
 }
+
+.btn {
+  border: 0px;
+  border-radius: 1px;
+}
