@@ -12,4 +12,5 @@ urlpatterns = patterns('',
     url(r'^newData$', views.newData, name='newData'),
     url(r'^getStationsForRoom$', views.getStationsForRoomView, name='getStations'),
     url(r'^updatePollingFreq$', views.updatePollingFreq, name='updatePollingFreq'),
+    url(r'^broadcastUuid$', views.broadcastSearchingBeacon, name='broadcastUuid')
 )

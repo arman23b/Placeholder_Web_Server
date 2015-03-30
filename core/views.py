@@ -4,13 +4,15 @@ from django.shortcuts import get_object_or_404, render_to_response, redirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.template import RequestContext
 from django import forms
-import requests, json, urllib2
+import requests
+import json
 
 
 from django.utils import timezone
 
 STATION_PORT = '8000'
 SET_STATION_ID_ROUTE = 'set-id'
+BROADCAST_UUID_ROUTE = 'broadcast-uuid'
 
 
 def index(request):
@@ -108,26 +110,41 @@ def getStationsForRoomView(request):
 
 
 def updatePollingFreq(request):
-  response = {}
-  if request.method == "GET":
-    return index(request)
-  if request.method == "POST":
-    newPollFreq = request.POST["pollFreq"]
+    response = {}
+    if request.method == "GET":
+        return index(request)
+    if request.method == "POST":
+        newPollFreq = request.POST["pollFreq"]
     stations = getRegisteredStations()
     for station in stations:
-      updateStation(station.name, station.room, newPollFreq)
+        updateStation(station.name, station.room, newPollFreq)
     response["pollingFrequency"] = newPollFreq
     return HttpResponse(json.dumps(response),
+                        content_type="application-json")
+
+
+def broadcastSearchingBeacon(request):
+    response = {}
+    if request.method == "POST":
+        uuid = request.POST["uuid"]
+        data = {"uuid": uuid}
+        stations = getAllStations()
+        for station in stations:
+            reqURL = "http://%s:%s/%s" % (station.ipAddress,
+                                          STATION_PORT, BROADCAST_UUID_ROUTE)
+            requests.post(reqURL, data=data)
+        return HttpResponse(json.dumps(response),
                             content_type="application-json")
+
 
 ###################
 ##### HELPERS #####
 ###################
 
-
 def sendIdToStation(station):
-    reqURL = "http://%s:%s/%s" % (station.ipAddress, STATION_PORT, SET_STATION_ID_ROUTE)
-    post = { "data" : json.dumps({ "id" : str(station.id) }) }
+    reqURL = "http://%s:%s/%s" % (station.ipAddress,
+                                  STATION_PORT, SET_STATION_ID_ROUTE)
+    post = {"data": json.dumps({"id": str(station.id)})}
     requests.post(reqURL, data=post)
     return
 
@@ -144,7 +161,7 @@ def getIpAddress(request):
 def createStationsArray(stations):
     arr = []
     for station in stations:
-        arr.append({ "ipAddress" : station.ipAddress })
+        arr.append({"ipAddress": station.ipAddress})
     return arr
 
 
@@ -152,10 +169,11 @@ def createItemsArray(items):
     arr = []
     for item in items:
         if item.room:
-            arr.append({ "beaconId" : item.beaconId, "room" : item.room.name })
+            arr.append({"beaconId": item.beaconId, "room": item.room.name})
         else:
-            arr.append({ "beaconId" : item.beaconId })
+            arr.append({"beaconId": item.beaconId})
     return arr
+
 
 def addRoom(name):
     try:
@@ -186,6 +204,10 @@ def registerStation(ipAddress, name, room, pollingFrequency=None):
         station.save()
     except ObjectDoesNotExist:
         print "Register Error: Station %s does not exist" % ipAddress
+
+
+def getAllStations():
+    return Station.objects.all()
 
 
 def getRegisteredStations():
@@ -302,8 +324,8 @@ def pollStations():
 
 
 def getPollingFreq():
-  stations = getRegisteredStations()
-  if len(stations) > 0:
-    return stations[0].pollingFrequency
-  else:
-    return 9600
+    stations = getRegisteredStations()
+    if len(stations) > 0:
+        return stations[0].pollingFrequency
+    else:
+        return 9600

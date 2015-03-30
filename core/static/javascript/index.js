@@ -5,6 +5,7 @@ $(document).ready(function () {
     addItemListener();
     addPollFreqListener();
     addLoadingUnregistered();
+    addSearchListener();
 
 });
 
@@ -234,23 +235,27 @@ function appendNewItem(ul, name, beaconId, room) {
         '<div class="info beaconId">' + beaconId + '</div>' +
         '<div class="info">&nbsp; | &nbsp;</div>' +
         '<div class="info item-room">' + room + '</div>' +
-        '<div class="info searchItemBtn"><button class="btn btn-xs">Search</button>' +
+        '<div class="info searchBtnInfo"><button class="btn btn-xs info searchItemBtn">Search</button></div>' +
         '</a>' +
         '</li>');
 }
 
-/*function addRoomListener() {
-    $( "#room-dialog" ).dialog({
-        autoOpen: false,
-        modal: true
+function addSearchListener() {
+    $(document).on('click', '.searchItemBtn', function () {
+        var uuid = $(this).parent().find('.beaconId').val();
+        updateSearchedBeacon(uuid);
     });
-    $("#newRoomOpenDialog").click(function () {
-        $("#room-dialog").dialog("open");
-    });
-    $("#newRoomButton").click(function () {
-        var newRoomName = $("#newRoomName").val().toLowerCase();
-        if (newRoomName != "") addNewRoom(newRoomName);
-        $("#newRoomName").val("");
-        $("#room-dialog").dialog("close");
-    });
-}*/
+}
+
+function updateSearchedBeacon(uuid) {
+  $.ajax({
+    'url': 'broadcastUuid',
+    'type': 'POST',
+    'data': {uuid: uuid},
+    'success': function(data) {
+    },
+    'error': function() {
+        console.error("Error");
+    }
+  });
+}
