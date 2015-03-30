@@ -10,7 +10,7 @@ import json
 
 from django.utils import timezone
 
-STATION_PORT = '8000'
+STATION_PORT = '8001'
 SET_STATION_ID_ROUTE = 'set-id'
 BROADCAST_UUID_ROUTE = 'broadcast-uuid'
 

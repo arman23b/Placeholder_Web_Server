@@ -238,13 +238,23 @@ function appendNewItem(ul, name, beaconId, room) {
         '<div class="info searchBtnInfo"><button class="btn btn-xs info searchItemBtn">Search</button></div>' +
         '</a>' +
         '</li>');
+    addSearchListener();
 }
 
 function addSearchListener() {
+    /*
     $(document).on('click', '.searchItemBtn', function () {
-        var uuid = $(this).parent().find('.beaconId').val();
+        var uuid = $(this).parent().parent().find('.unregistered-item').find('.beaconId').text();
+        console.log(uuid);
         updateSearchedBeacon(uuid);
     });
+    */
+    $('.searchItemBtn').click(function(e) {
+        e.stopPropagation();
+        var uuid = $(this).parent().parent().find('.beaconId').text();
+        console.log(uuid);
+        updateSearchedBeacon(uuid);
+    })
 }
 
 function updateSearchedBeacon(uuid) {
