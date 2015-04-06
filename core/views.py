@@ -40,7 +40,10 @@ def newData(request):
     if request.method == "POST":
         ipAddress = getIpAddress(request)
         if "id" in request.POST:
-            station = Station.objects.get(id=int(request.POST["id"]))
+            try:
+                station = Station.objects.get(id=int(request.POST["id"]))
+            except ObjectDoesNotExist:
+                station = addStation(ipAddress)
         else:
             station = addStation(ipAddress)
 
@@ -161,7 +164,8 @@ def getIpAddress(request):
 def createStationsArray(stations):
     arr = []
     for station in stations:
-        arr.append({"ipAddress": station.ipAddress})
+        arr.append({ "ipAddress" : station.ipAddress,
+                     "id" : station.id })
     return arr
 
 

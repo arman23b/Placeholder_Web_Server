@@ -179,7 +179,7 @@ function updateUnregisteredStations(ipAddresses) {
     var ul = $("#unregisteredStations-list");
     ul.empty();
     for (var i = 0; i < ipAddresses.length; i++) {
-        appendNewStation(ul, "-------", ipAddresses[i]["ipAddress"], "-------");
+        appendNewStation(ul, "-------", ipAddresses[i]["ipAddress"], ipAddresses[i]["id"], "-------");
     }
     $("a.unregistered-station").click(function () {
         $("#station-dialog").dialog("open");
@@ -216,14 +216,16 @@ function removeElementFromList(element, list, className) {
 }
 
 
-function appendNewStation(ul, name, ip, room) {
+function appendNewStation(ul, name, ip, id, room) {
     ul.append('<li class="popover-item">' +
         '<a class="text-link unregistered-station">' +
-        '<div class="name">' + name + '</div>' +
-        '<div class="info ipAddress">' + ip + '</div>' +
-        '<div class="info">&nbsp; | &nbsp;</div>' +
-        '<div class="info station-room">' + room + '</div>' +
-        '</a>' +
+        '<div class="name">' + name + '</div>' + 
+        '<div class="info id"> id: ' + id + '</div>' + 
+        '<div class="info">&nbsp; | &nbsp;</div>' + 
+        '<div class="info ipAddress">' + ip + '</div>' + 
+        '<div class="info">&nbsp; | &nbsp;</div>' + 
+        '<div class="info station-room">' + room + '</div>' + 
+        '</a>' + 
         '</li>');
 }
 
