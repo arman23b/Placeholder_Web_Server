@@ -159,7 +159,10 @@ def sendIdToStation(station):
     reqURL = "http://%s:%s/%s" % (station.ipAddress,
                                   STATION_PORT, SET_STATION_ID_ROUTE)
     post = {"data": json.dumps({"id": str(station.id)})}
-    requests.post(reqURL, data=post)
+    try:
+        requests.post(reqURL, data=post)
+    except ConnectionError:
+        print "Couldn't send id to " + station.ipAddress
     return
 
 
