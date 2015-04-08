@@ -249,7 +249,7 @@ function appendNewItem(ul, name, beaconId, room, registeredClass) {
         '<div class="info beaconId">' + beaconId + '</div>' +
         '<div class="info">&nbsp; | &nbsp;</div>' +
         '<div class="info item-room">' + room + '</div>' +
-        '<div class="info searchBtnInfo"><button class="btn btn-xs info searchItemBtn">Search</button></div>' +
+        '<div class="info searchBtnInfo"><button class="button-primary searchItemBtn">Search</button></div>' +
         '</a>' +
         '</li>');
     addSearchListener();
