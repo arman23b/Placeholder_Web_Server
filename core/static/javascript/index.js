@@ -84,10 +84,11 @@ function addStationListener() {
     });
     $("#newStationButton").click(function () {
         var newStationName = $("#newStationName").val().toLowerCase();
+        var newStationId = $("#newStationId").val();
         var newStationIp = $("#newStationIp").val();
         var newStationRoom = $("#roomOptions option:selected").text();
         if (newStationName != "" && newStationIp != "") {
-            addNewStation(newStationName, newStationIp, -1, newStationRoom);
+            addNewStation(newStationName, newStationIp, newStationId, newStationRoom);
         }
         $("#newStationName").val("");
         $("#newStationIp").val("");
@@ -188,7 +189,13 @@ function updateUnregisteredStations(ipAddresses) {
     $("a.unregistered-station").click(function () {
         $("#station-dialog").dialog("open");
         var ipAddress = $(this).find(".ipAddress").html();
+        $("#newStationIp").prop("readonly", false);
         $("#newStationIp").val(ipAddress);
+        $("#newStationIp").prop("readonly", true);
+        var id = $(this).find(".id").html();
+        $("#newStationId").prop("readonly", false);
+        $("#newStationId").val(id);
+        $("#newStationId").prop("readonly", true);
     });
 }
 
@@ -197,15 +204,18 @@ function updateUnregisteredItems(beaconIds) {
     var ul = $("#unregisteredItems-list");
     ul.empty();
     for (var i = 0; i < beaconIds.length; i++) {
-        appendNewItem(ul, "-------", beaconIds[i]["beaconId"], beaconIds[i]["room"]);
+        appendNewItem(ul, "-------", beaconIds[i]["beaconId"], beaconIds[i]["room"], "unregistered-item");
     }
     $("a.unregistered-item").click(function () {
         $("#item-dialog").dialog("open");
         var beaconId = $(this).find(".beaconId").html();
+        $("#newItemBeaconId").prop("readonly", false);
         $("#newItemBeaconId").val(beaconId);
+        $("#newItemBeaconId").prop("readonly", true);
         var room = $(this).find(".item-room").html();
+        $("#newItemRoom").prop("readonly", false);
         $("#newItemRoom").val(room);
-        $("")
+        $("#newItemRoom").prop("readonly", true);
     });
 }
 
@@ -224,7 +234,8 @@ function appendNewStation(ul, name, ip, id, room) {
     ul.append('<li class="popover-item">' +
         '<a class="text-link unregistered-station">' +
         '<div class="name">' + name + '</div>' + 
-        '<div class="info id"> id: ' + id + '</div>' + 
+        '<div class="info"> id: </div>' + 
+        '<div class="info id">' + id + '</div>' + 
         '<div class="info">&nbsp; | &nbsp;</div>' + 
         '<div class="info ipAddress">' + ip + '</div>' + 
         '<div class="info">&nbsp; | &nbsp;</div>' + 
@@ -234,14 +245,17 @@ function appendNewStation(ul, name, ip, id, room) {
 }
 
 
-function appendNewItem(ul, name, beaconId, room) {
+function appendNewItem(ul, name, beaconId, room, registeredClass) {
+    if (registeredClass == 'undefined') {
+        registeredClass = "";
+    }
     ul.append('<li class="popover-item">' +
-        '<a class="text-link unregistered-item">' +
+        '<a class="text-link ' + registeredClass + '"">' +
         '<div class="name">' + name + '</div>' +
         '<div class="info beaconId">' + beaconId + '</div>' +
         '<div class="info">&nbsp; | &nbsp;</div>' +
         '<div class="info item-room">' + room + '</div>' +
-        '<div class="info searchBtnInfo"><button class="btn btn-xs info searchItemBtn">Search</button></div>' +
+        '<div class="info searchBtnInfo"><button class="button-primary searchItemBtn">Search</button></div>' +
         '</a>' +
         '</li>');
     addSearchListener();
