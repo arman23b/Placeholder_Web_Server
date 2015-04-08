@@ -2,6 +2,8 @@ from django.http import HttpResponse, JsonResponse
 from core.models import *
 from django.shortcuts import get_object_or_404, render_to_response, redirect
 from django.core.exceptions import ObjectDoesNotExist
+from requests.exceptions import ConnectionError
+from django.db import transaction
 from django.template import RequestContext
 from django import forms
 import requests
@@ -36,12 +38,17 @@ def loadUnregistered(request):
                             content_type="application-json")
 
 
+@transaction.atomic
 def newData(request):
     if request.method == "POST":
         ipAddress = getIpAddress(request)
+        print "Request from ipAddress: " + ipAddress
         if "id" in request.POST:
             try:
                 station = Station.objects.get(id=int(request.POST["id"]))
+                if station.ipAddress != ipAddress:
+                    station.ipAddress = ipAddress
+                    station.save()
             except ObjectDoesNotExist:
                 station = addStation(ipAddress)
         else:
@@ -133,9 +140,13 @@ def broadcastSearchingBeacon(request):
         data = {"uuid": uuid}
         stations = getAllStations()
         for station in stations:
-            reqURL = "http://%s:%s/%s" % (station.ipAddress,
-                                          STATION_PORT, BROADCAST_UUID_ROUTE)
-            requests.post(reqURL, data=data)
+            try:
+                reqURL = "http://%s:%s/%s" % (station.ipAddress,
+                                              STATION_PORT, BROADCAST_UUID_ROUTE)
+                requests.post(reqURL, data=data)
+            except ConnectionError:
+                print "Couldn't broadcast to " + station.ipAddress
+
         return HttpResponse(json.dumps(response),
                             content_type="application-json")
 
@@ -296,7 +307,7 @@ def findItemsRoom(beaconId):
     try:
         item = Item.objects.get(beaconId=beaconId)
         distances = Distance.objects.filter(item=item)
-        orderedDistances = distances.order_by('dist')
+        orderedDistances = distances.order_by('-dist')
         if len(orderedDistances) == 0:
             print "No distance recorder for item %s" % item.name
         else:

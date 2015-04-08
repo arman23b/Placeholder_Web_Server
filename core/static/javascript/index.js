@@ -87,7 +87,7 @@ function addStationListener() {
         var newStationIp = $("#newStationIp").val();
         var newStationRoom = $("#roomOptions option:selected").text();
         if (newStationName != "" && newStationIp != "") {
-            addNewStation(newStationName, newStationIp, newStationRoom);
+            addNewStation(newStationName, newStationIp, -1, newStationRoom);
         }
         $("#newStationName").val("");
         $("#newStationIp").val("");
@@ -97,9 +97,9 @@ function addStationListener() {
 }
 
 
-function addNewStation(name, ip, room) {
+function addNewStation(name, ip, id, room) {
     var ul = $("#stations-list");
-    appendNewStation(ul, name, ip, room);
+    appendNewStation(ul, name, ip, id, room);
     $.ajax({
         'url': 'addStation',
         'type': 'POST',
