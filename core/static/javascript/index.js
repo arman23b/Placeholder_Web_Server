@@ -198,7 +198,7 @@ function updateUnregisteredItems(beaconIds) {
     var ul = $("#unregisteredItems-list");
     ul.empty();
     for (var i = 0; i < beaconIds.length; i++) {
-        appendNewItem(ul, "-------", beaconIds[i]["beaconId"], beaconIds[i]["room"]);
+        appendNewItem(ul, "-------", beaconIds[i]["beaconId"], beaconIds[i]["room"], "unregistered-item");
     }
     $("a.unregistered-item").click(function () {
         $("#item-dialog").dialog("open");
@@ -206,7 +206,6 @@ function updateUnregisteredItems(beaconIds) {
         $("#newItemBeaconId").val(beaconId);
         var room = $(this).find(".item-room").html();
         $("#newItemRoom").val(room);
-        $("")
     });
 }
 
@@ -236,9 +235,12 @@ function appendNewStation(ul, name, ip, id, room) {
 }
 
 
-function appendNewItem(ul, name, beaconId, room) {
+function appendNewItem(ul, name, beaconId, room, registeredClass) {
+    if (registeredClass == 'undefined') {
+        registeredClass = "";
+    }
     ul.append('<li class="popover-item">' +
-        '<a class="text-link unregistered-item">' +
+        '<a class="text-link ' + registeredClass + '"">' +
         '<div class="name">' + name + '</div>' +
         '<div class="info beaconId">' + beaconId + '</div>' +
         '<div class="info">&nbsp; | &nbsp;</div>' +
