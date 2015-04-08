@@ -155,7 +155,7 @@ function addNewItem(name, beaconId, room) {
 
 
 function addLoadingUnregistered() {
-    setInterval(function () {
+    var loadUnregistered = function() {
         $.ajax({
             'url': 'loadUnregistered',
             'type': 'POST',
@@ -171,6 +171,10 @@ function addLoadingUnregistered() {
                 console.error("Error");
             }
         });
+    };
+    loadUnregistered();
+    setInterval(function () {
+        loadUnregistered();
     }, 5000);
 }
 
