@@ -205,7 +205,9 @@ function updateUnregisteredItems(beaconIds) {
     $("a.unregistered-item").click(function () {
         $("#item-dialog").dialog("open");
         var beaconId = $(this).find(".beaconId").html();
+        $("#newItemBeaconId").prop("readonly", false);
         $("#newItemBeaconId").val(beaconId);
+        $("#newItemBeaconId").prop("readonly", true);
         var room = $(this).find(".item-room").html();
         $("#newItemRoom").prop("readonly", false);
         $("#newItemRoom").val(room);
