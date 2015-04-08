@@ -185,7 +185,9 @@ function updateUnregisteredStations(ipAddresses) {
     $("a.unregistered-station").click(function () {
         $("#station-dialog").dialog("open");
         var ipAddress = $(this).find(".ipAddress").html();
+        $("#newStationIp").prop("readonly", false);
         $("#newStationIp").val(ipAddress);
+        $("#newStationIp").prop("readonly", true);
         var id = $(this).find(".id").html();
         $("#newStationId").prop("readonly", false);
         $("#newStationId").val(id);
