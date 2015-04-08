@@ -2,6 +2,7 @@ from django.http import HttpResponse, JsonResponse
 from core.models import *
 from django.shortcuts import get_object_or_404, render_to_response, redirect
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils import timezone
 from requests.exceptions import ConnectionError
 from django.db import transaction
 from django.template import RequestContext
@@ -239,7 +240,7 @@ def getRegisteredStations():
 
 def getUnregisteredStations():
     # TODO: change to constant
-    expireTime = datetime.now() - timedelta(seconds=30)
+    expireTime = timezone.now() - timedelta(seconds=30)
     return Station.objects.filter(registered=False) \
                           .filter(lastUpdate__gte=expireTime)
 
