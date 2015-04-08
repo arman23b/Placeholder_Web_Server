@@ -32,6 +32,7 @@ class Station(models.Model):
     name = models.CharField(max_length=200)
     room = models.ForeignKey(Room, null=True)
     pollingFrequency = models.CharField(max_length=200, null=True)
+    lastUpdate = models.DateTimeField(auto_now=True, auto_now_add=True)
 
     def __unicode__(self):
         return self.ipAddress

@@ -5,6 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from requests.exceptions import ConnectionError
 from django.db import transaction
 from django.template import RequestContext
+from datetime import datetime, timedelta
 import requests
 import json
 
@@ -203,11 +204,14 @@ def getAllRooms():
     return Room.objects.all()
 
 
+@transaction.atomic
 def addStation(ipAddress):
     try:
-        return Station.objects.get(ipAddress=ipAddress)
+        station = Station.objects.get(ipAddress=ipAddress)
+        station.save()
     except ObjectDoesNotExist:
-        return Station.objects.create(ipAddress=ipAddress)
+        station = Station.objects.create(ipAddress=ipAddress)
+        station.save()
 
 
 def registerStation(ipAddress, name, room, pollingFrequency=None):
@@ -230,7 +234,10 @@ def getRegisteredStations():
 
 
 def getUnregisteredStations():
-    return Station.objects.filter(registered=False)
+    # TODO: change to constant
+    expireTime = datetime.now() - timedelta(seconds=30)
+    return Station.objects.filter(registered=False) \
+                          .filter(lastUpdate__gte=expireTime)
 
 
 def updateStation(name, room, pollingFrequency=None):
