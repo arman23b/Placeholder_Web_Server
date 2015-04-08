@@ -5,7 +5,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from requests.exceptions import ConnectionError
 from django.db import transaction
 from django.template import RequestContext
-from django import forms
 import requests
 import json
 
@@ -142,7 +141,8 @@ def broadcastSearchingBeacon(request):
         for station in stations:
             try:
                 reqURL = "http://%s:%s/%s" % (station.ipAddress,
-                                              STATION_PORT, BROADCAST_UUID_ROUTE)
+                                              STATION_PORT,
+                                              BROADCAST_UUID_ROUTE)
                 requests.post(reqURL, data=data)
             except ConnectionError:
                 print "Couldn't broadcast to " + station.ipAddress
@@ -175,8 +175,8 @@ def getIpAddress(request):
 def createStationsArray(stations):
     arr = []
     for station in stations:
-        arr.append({ "ipAddress" : station.ipAddress,
-                     "id" : station.id })
+        arr.append({"ipAddress": station.ipAddress,
+                    "id": station.id})
     return arr
 
 
