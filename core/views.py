@@ -215,6 +215,7 @@ def addStation(ipAddress):
     except ObjectDoesNotExist:
         station = Station.objects.create(ipAddress=ipAddress)
         station.save()
+    return station
 
 
 def registerStation(ipAddress, name, room, pollingFrequency=None):
