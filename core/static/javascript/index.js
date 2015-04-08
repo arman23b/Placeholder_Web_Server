@@ -84,10 +84,11 @@ function addStationListener() {
     });
     $("#newStationButton").click(function () {
         var newStationName = $("#newStationName").val().toLowerCase();
+        var newStationId = $("#newStationId").val();
         var newStationIp = $("#newStationIp").val();
         var newStationRoom = $("#roomOptions option:selected").text();
         if (newStationName != "" && newStationIp != "") {
-            addNewStation(newStationName, newStationIp, -1, newStationRoom);
+            addNewStation(newStationName, newStationIp, newStationId, newStationRoom);
         }
         $("#newStationName").val("");
         $("#newStationIp").val("");
@@ -185,6 +186,10 @@ function updateUnregisteredStations(ipAddresses) {
         $("#station-dialog").dialog("open");
         var ipAddress = $(this).find(".ipAddress").html();
         $("#newStationIp").val(ipAddress);
+        var id = $(this).find(".id").html();
+        $("#newStationId").prop("readonly", false);
+        $("#newStationId").val(id);
+        $("#newStationId").prop("readonly", true);
     });
 }
 
@@ -220,7 +225,8 @@ function appendNewStation(ul, name, ip, id, room) {
     ul.append('<li class="popover-item">' +
         '<a class="text-link unregistered-station">' +
         '<div class="name">' + name + '</div>' + 
-        '<div class="info id"> id: ' + id + '</div>' + 
+        '<div class="info"> id: </div>' + 
+        '<div class="info id">' + id + '</div>' + 
         '<div class="info">&nbsp; | &nbsp;</div>' + 
         '<div class="info ipAddress">' + ip + '</div>' + 
         '<div class="info">&nbsp; | &nbsp;</div>' + 
