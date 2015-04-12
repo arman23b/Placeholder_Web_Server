@@ -1,4 +1,5 @@
 var global_polling_freq = 5000;
+var POLL_INTERVAL = 0;
 $(document).ready(function () {
 
     addRoomListener();
@@ -29,6 +30,8 @@ function addPollFreqListener() {
 
 function updatePollFreq(newPollFreq) {
   global_polling_freq = newPollFreq * 1000;
+  clearInterval(POLL_INTERVAL);
+  addLoadingUnregistered();
   $.ajax({
     'url': 'updatePollingFreq',
     'type': 'POST',
@@ -176,7 +179,7 @@ function addLoadingUnregistered() {
         });
     };
     loadUnregistered();
-    setInterval(function () {
+    POLL_INTERVAL = setInterval(function () {
         loadUnregistered();
     }, global_polling_freq);
 }
