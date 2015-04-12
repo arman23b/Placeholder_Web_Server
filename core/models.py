@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from django import forms
 
 
@@ -18,9 +19,15 @@ class Item(models.Model):
     name = models.CharField(max_length=200, null=True)
     room = models.ForeignKey(Room, null=True)
     activationTime = models.DateTimeField(null=True)
+    lastUpdate = models.DateTimeField()
 
     def __unicode__(self):
         return self.beaconId
+
+    def save(self, *args, **kwargs):
+        # update timestamp on save
+        self.lastUpdate = timezone.now()
+        return super(Item, self).save(*args, **kwargs)
 
     class Meta:
         db_table = "item"
@@ -32,10 +39,15 @@ class Station(models.Model):
     name = models.CharField(max_length=200)
     room = models.ForeignKey(Room, null=True)
     pollingFrequency = models.CharField(max_length=200, null=True)
-    lastUpdate = models.DateTimeField(auto_now=True, auto_now_add=True)
+    lastUpdate = models.DateTimeField()
 
     def __unicode__(self):
         return self.ipAddress
+
+    def save(self, *args, **kwargs):
+        # update timestamp on save
+        self.lastUpdate = timezone.now()
+        return super(Station, self).save(*args, **kwargs)
 
     class Meta:
         db_table = "station"

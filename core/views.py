@@ -11,8 +11,6 @@ import requests
 import json
 
 
-from django.utils import timezone
-
 STATION_PORT = '8001'
 SET_STATION_ID_ROUTE = 'set-id'
 BROADCAST_UUID_ROUTE = 'broadcast-uuid'
@@ -279,7 +277,10 @@ def getRegisteredItems():
 
 
 def getUnregisteredItems():
-    return Item.objects.filter(registered=False)
+    # TODO: change to constant
+    expireTime = timezone.now() - timedelta(seconds=30)
+    return Item.objects.filter(registered=False) \
+                       .filter(lastUpdate__gte=expireTime)
 
 
 def updateItemsRoom(name, room):
