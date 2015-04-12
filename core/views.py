@@ -19,9 +19,14 @@ TIMEOUT_PERIOD = 30
 
 def index(request):
     data = {}
+    stations = getRegisteredStations()
+    items = getRegisteredItems()
+    expireTime = timezone.now() - timedelta(seconds=TIMEOUT_PERIOD)
     data["rooms"] = getAllRooms()
-    data["stations"] = getRegisteredStations()
-    data["items"] = getRegisteredItems()
+    data["active_stations"] = stations.filter(lastUpdate__gte=expireTime)
+    data["inactive_stations"] = stations.filter(lastUpdate__lt=expireTime)
+    data["active_items"] = items.filter(lastUpdate__gte=expireTime)
+    data["inactive_items"] = items.filter(lastUpdate__lt=expireTime)
     data["pollingFrequency"] = getPollingFreq()
     return render_to_response("index.html", data,
                               context_instance=RequestContext(request))

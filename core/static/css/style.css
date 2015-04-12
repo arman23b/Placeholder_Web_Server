@@ -81,7 +81,7 @@ div.form {
     border-bottom-width: 0;
 }
 
-.text-link:hover {
+.active.text-link:hover {
     color: #fff;
     background: #33C3F0;
 }
@@ -89,6 +89,12 @@ div.form {
 .text:hover,
 .popover-item:first-child .text-link:hover:after {
     border-bottom-color: #33C3F0;
+}
+
+.inactive.text-link:hover {
+    color: #fff;
+    background: #000000;
+    cursor: default;
 }
 
 input:invalid {

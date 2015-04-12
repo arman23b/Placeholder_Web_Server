@@ -28,6 +28,7 @@ class Migration(migrations.Migration):
                 ('registered', models.BooleanField(default=False)),
                 ('name', models.CharField(max_length=200, null=True)),
                 ('activationTime', models.DateTimeField(null=True)),
+                ('lastUpdate', models.DateTimeField()),
             ],
             options={
                 'db_table': 'item',
@@ -53,7 +54,7 @@ class Migration(migrations.Migration):
                 ('registered', models.BooleanField(default=False)),
                 ('name', models.CharField(max_length=200)),
                 ('pollingFrequency', models.CharField(max_length=200, null=True)),
-                ('lastUpdate', models.DateTimeField(auto_now=True, auto_now_add=True)),
+                ('lastUpdate', models.DateTimeField()),
                 ('room', models.ForeignKey(to='core.Room', null=True)),
             ],
             options={

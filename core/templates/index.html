@@ -38,9 +38,22 @@
                     </td>
                     <td class="four columns no-boarder">
                         <ul class="popover-list" id="stations-list">
-                            {% for station in stations %}
+                            {% for station in active_stations %}
                             <li class="popover-item">
-                                <a class="text-link">
+                                <a class="text-link active">
+                                    <div class="name">{{ station.name }}</div>
+                                    <div class="info"> id: </div>
+                                    <div class="info id">{{ station.id }}</div>
+                                    <div class="info">&nbsp; | &nbsp;</div>
+                                    <div class="info ipAddress">{{ station.ipAddress }}</div>
+                                    <div class="info">&nbsp; | &nbsp;</div>
+                                    <div class="info station-room">{{ station.room.name }}</div>
+                                </a>
+                            </li>
+                            {% endfor %}
+                            {% for station in inactive_stations %}
+                            <li class="popover-item">
+                                <a class="text-link inactive">
                                     <div class="name">{{ station.name }}</div>
                                     <div class="info"> id: </div>
                                     <div class="info id">{{ station.id }}</div>
@@ -55,9 +68,20 @@
                     </td>
                     <td class="four columns no-boarder">
                         <ul class="popover-list" id="items-list">
-                            {% for item in items %}
+                            {% for item in active_items %}
                             <li class="popover-item">
-                                <a class="text-link">
+                                <a class="text-link active">
+                                    <div class="name">{{ item.name }}</div>
+                                    <div class="info beaconId">{{ item.beaconId }}</div>
+                                    <div class="info">&nbsp; | &nbsp;</div>
+                                    <div class="info item-room">{{ item.room.name }}</div>
+                                    <div class="info searchBtnInfo"><button class="button-primary searchItemBtn">Search</button></div>
+                                </a>
+                            </li>
+                            {% endfor %}
+                            {% for item in inactive_items %}
+                            <li class="popover-item">
+                                <a class="text-link inactive">
                                     <div class="name">{{ item.name }}</div>
                                     <div class="info beaconId">{{ item.beaconId }}</div>
                                     <div class="info">&nbsp; | &nbsp;</div>
