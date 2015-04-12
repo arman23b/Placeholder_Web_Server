@@ -14,6 +14,7 @@ import json
 STATION_PORT = '8001'
 SET_STATION_ID_ROUTE = 'set-id'
 BROADCAST_UUID_ROUTE = 'broadcast-uuid'
+TIMEOUT_PERIOD = 30
 
 
 def index(request):
@@ -237,8 +238,7 @@ def getRegisteredStations():
 
 
 def getUnregisteredStations():
-    # TODO: change to constant
-    expireTime = timezone.now() - timedelta(seconds=30)
+    expireTime = timezone.now() - timedelta(seconds=TIMEOUT_PERIOD)
     return Station.objects.filter(registered=False) \
                           .filter(lastUpdate__gte=expireTime)
 
@@ -277,8 +277,7 @@ def getRegisteredItems():
 
 
 def getUnregisteredItems():
-    # TODO: change to constant
-    expireTime = timezone.now() - timedelta(seconds=30)
+    expireTime = timezone.now() - timedelta(seconds=TIMEOUT_PERIOD)
     return Item.objects.filter(registered=False) \
                        .filter(lastUpdate__gte=expireTime)
 
