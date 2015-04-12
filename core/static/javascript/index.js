@@ -1,3 +1,4 @@
+var global_polling_freq = 5000;
 $(document).ready(function () {
 
     addRoomListener();
@@ -27,6 +28,7 @@ function addPollFreqListener() {
 }
 
 function updatePollFreq(newPollFreq) {
+  global_polling_freq = newPollFreq * 1000;
   $.ajax({
     'url': 'updatePollingFreq',
     'type': 'POST',
@@ -176,7 +178,7 @@ function addLoadingUnregistered() {
     loadUnregistered();
     setInterval(function () {
         loadUnregistered();
-    }, 5000);
+    }, global_polling_freq);
 }
 
 
@@ -233,14 +235,14 @@ function removeElementFromList(element, list, className) {
 function appendNewStation(ul, name, ip, id, room) {
     ul.append('<li class="popover-item">' +
         '<a class="text-link unregistered-station">' +
-        '<div class="name">' + name + '</div>' + 
-        '<div class="info"> id: </div>' + 
-        '<div class="info id">' + id + '</div>' + 
-        '<div class="info">&nbsp; | &nbsp;</div>' + 
-        '<div class="info ipAddress">' + ip + '</div>' + 
-        '<div class="info">&nbsp; | &nbsp;</div>' + 
-        '<div class="info station-room">' + room + '</div>' + 
-        '</a>' + 
+        '<div class="name">' + name + '</div>' +
+        '<div class="info"> id: </div>' +
+        '<div class="info id">' + id + '</div>' +
+        '<div class="info">&nbsp; | &nbsp;</div>' +
+        '<div class="info ipAddress">' + ip + '</div>' +
+        '<div class="info">&nbsp; | &nbsp;</div>' +
+        '<div class="info station-room">' + room + '</div>' +
+        '</a>' +
         '</li>');
 }
 
