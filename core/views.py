@@ -234,6 +234,16 @@ def registerStation(ipAddress, name, room, pollingFrequency=None):
         print "Register Error: Station %s does not exist" % ipAddress
 
 
+def unregisterItem(uuid):
+  item = Item.objects.get(beaconId=uuid)
+  item.registered = False
+  item.save()
+
+def unregisterStation(ipAddress):
+  station = Station.objects.get(ipAddress=ipAddress)
+  station.registered = False
+  station.save()
+
 def getAllStations():
     return Station.objects.all()
 

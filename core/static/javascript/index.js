@@ -1,5 +1,5 @@
 var global_polling_freq = 5000;
-var POLL_INTERVAL = 0;
+var POLL_INTERVAL;
 $(document).ready(function () {
 
     addRoomListener();
@@ -291,6 +291,53 @@ function updateSearchedBeacon(uuid) {
     },
     'error': function() {
         console.error("Error");
+    }
+  });
+}
+
+function addDeleteListner() {
+  $('.deleteBtn').click(function(e) {
+    e.stopPropagation();
+  })
+  var toDelete = $(this).parent();
+  var list = toDelete.parent();
+  list.removeElementFromList(toDelete);
+}
+
+function addUnregisterItemListner() {
+  $('.unregisterItemBtn').click(function(e) {
+    e.stopPropagation();
+    var uuid = $(this).parent().parent().find('.beaconId').text();
+    unregisterItem(uuid);
+  })
+}
+
+function addUnregisterStationListner() {
+  $('.unregisterStationBtn').click(function(e) {
+    e.stopPropagation();
+    var ip = $(this).parent().parent().find('.ipAddress').text();
+    unregisterStation(ipAddress);
+  })
+}
+
+function unregisterItem(uuid) {
+  $.ajax({
+    'url': 'unregisterItem',
+    'type': 'POST',
+    'success': function(data) {},
+    'error': function() {
+      console.error("Error: can't unregister");
+    }
+  });
+}
+
+function unregisterStation(ipAddress) {
+  $.ajax({
+    'url': 'unregisterStation',
+    'type': 'POST',
+    'success': function(data) {},
+    'error': function() {
+      console.error("Error: can't unregister");
     }
   });
 }
