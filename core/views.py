@@ -37,8 +37,10 @@ def loadUnregistered(request):
         response = {}
         unregisteredStations = createStationsArray(getUnregisteredStations())
         unregisteredItems = createItemsArray(getUnregisteredItems())
+        registeredItems = createItemsArray(getRegisteredItems())
         response["unregisteredIpAddresses"] = unregisteredStations
         response["unregisteredBeaconIds"] = unregisteredItems
+        response["registeredBeaconIds"] = registeredItems
         return HttpResponse(json.dumps(response),
                             content_type="application-json")
 
@@ -186,17 +188,17 @@ def createStationsArray(stations):
     for station in stations:
         arr.append({"ipAddress": station.ipAddress,
                     "id": station.id})
-    return arr
+    return sorted(arr, key=lambda station: station["ipAddress"])
 
 
 def createItemsArray(items):
     arr = []
     for item in items:
         if item.room:
-            arr.append({"beaconId": item.beaconId, "room": item.room.name})
+            arr.append({"beaconId": item.beaconId, "room": item.room.name, "name": item.name})
         else:
-            arr.append({"beaconId": item.beaconId})
-    return arr
+            arr.append({"beaconId": item.beaconId, "room": "undefined", "name": item.name})
+    return sorted(arr, key=lambda item: (item["room"], item["beaconId"]))
 
 
 def addRoom(name):
