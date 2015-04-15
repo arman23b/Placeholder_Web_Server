@@ -37,8 +37,10 @@ def loadUnregistered(request):
         response = {}
         unregisteredStations = createStationsArray(getUnregisteredStations())
         unregisteredItems = createItemsArray(getUnregisteredItems())
+        registeredItems = createItemsArray(getRegisteredItems())
         response["unregisteredIpAddresses"] = unregisteredStations
         response["unregisteredBeaconIds"] = unregisteredItems
+        response["registeredBeaconIds"] = registeredItems
         return HttpResponse(json.dumps(response),
                             content_type="application-json")
 
@@ -59,6 +61,7 @@ def newData(request):
         else:
             station = addStation(ipAddress)
 
+        clearDistances()
         data = request.POST["data"]
         dataDict = json.loads(data)
         for beaconId in dataDict.keys():
@@ -161,6 +164,19 @@ def broadcastSearchingBeacon(request):
 ##### HELPERS #####
 ###################
 
+
+# Delete distances for inactive stations and items
+def clearDistances():
+    expireTime = timezone.now() - timedelta(seconds=TIMEOUT_PERIOD)
+    inactiveStations = Station.objects.filter(lastUpdate__lt=expireTime)
+    inactiveItems = Item.objects.filter(lastUpdate__lt=expireTime)
+    for station in inactiveStations:
+        Distance.objects.filter(station=station).delete()
+    for item in inactiveItems:
+        Distance.objects.filter(item=item).delete()
+    return
+
+
 def sendIdToStation(station):
     reqURL = "http://%s:%s/%s" % (station.ipAddress,
                                   STATION_PORT, SET_STATION_ID_ROUTE)
@@ -186,17 +202,17 @@ def createStationsArray(stations):
     for station in stations:
         arr.append({"ipAddress": station.ipAddress,
                     "id": station.id})
-    return arr
+    return sorted(arr, key=lambda station: station["ipAddress"])
 
 
 def createItemsArray(items):
     arr = []
     for item in items:
         if item.room:
-            arr.append({"beaconId": item.beaconId, "room": item.room.name})
+            arr.append({"beaconId": item.beaconId, "room": item.room.name, "name": item.name})
         else:
-            arr.append({"beaconId": item.beaconId})
-    return arr
+            arr.append({"beaconId": item.beaconId, "room": "undefined", "name": item.name})
+    return sorted(arr, key=lambda item: item["beaconId"])
 
 
 def addRoom(name):

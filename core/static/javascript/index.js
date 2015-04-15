@@ -170,8 +170,10 @@ function addLoadingUnregistered() {
             'success': function(data) {
                 var unregisteredIpAddresses = data["unregisteredIpAddresses"];
                 var unregisteredBeaconIds = data["unregisteredBeaconIds"];
+                var registeredBeaconIds = data["registeredBeaconIds"];
                 updateUnregisteredStations(unregisteredIpAddresses);
                 updateUnregisteredItems(unregisteredBeaconIds);
+                updateRegisteredItems(registeredBeaconIds);
             },
             'error': function() {
                 console.error("Error");
@@ -222,6 +224,15 @@ function updateUnregisteredItems(beaconIds) {
         $("#newItemRoom").val(room);
         $("#newItemRoom").prop("readonly", true);
     });
+}
+
+
+function updateRegisteredItems(beaconIds) {
+    var ul = $("#items-list");
+    ul.empty();
+    for (var i = 0; i < beaconIds.length; i++) {
+        appendNewItem(ul, beaconIds[i]["name"], beaconIds[i]["beaconId"], beaconIds[i]["room"], "");
+    }
 }
 
 
