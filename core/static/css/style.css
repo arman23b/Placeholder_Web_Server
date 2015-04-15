@@ -105,3 +105,9 @@ input:invalid {
   border: 0px;
   border-radius: 1px;
 }
+
+.unregister {
+  postion: absolute;
+  top: 0px;
+  right: 0px;
+}

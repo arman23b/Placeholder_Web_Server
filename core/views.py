@@ -250,15 +250,29 @@ def registerStation(ipAddress, name, room, pollingFrequency=None):
         print "Register Error: Station %s does not exist" % ipAddress
 
 
-def unregisterItem(uuid):
-  item = Item.objects.get(beaconId=uuid)
-  item.registered = False
-  item.save()
+def unregisterItem(request):
+  response = {}
+  if request.method == "GET":
+    return index(request)
+  if request.method == 'POST':
+    uuid = request.POST['uuid']
+    data = {'uuid': uuid}
+    item = Item.objects.get(beaconId=uuid)
+    item.registered = False
+    item.save()
+  return HttpResponse(json.dumps(response), content_type="application-json")
 
-def unregisterStation(ipAddress):
-  station = Station.objects.get(ipAddress=ipAddress)
-  station.registered = False
-  station.save()
+def unregisterStation(request):
+  response = {}
+  if request.method == "GET":
+    return index(request)
+  if request.method == 'POST':
+    ipAddress = request.POST['ipAddress']
+    data = {'ipAddress': ipAddress}
+    station = Station.objects.get(ipAddress=ipAddress)
+    station.registered = False
+    station.save()
+  return HttpResponse(json.dumps(response), content_type="application-json")
 
 def getAllStations():
     return Station.objects.all()
@@ -386,4 +400,4 @@ def getPollingFreq():
     if len(stations) > 0:
         return stations[0].pollingFrequency
     else:
-        return 9600
+        return 5

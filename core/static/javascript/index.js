@@ -257,7 +257,9 @@ function appendNewStation(ul, name, ip, id, room) {
         '<div class="info">&nbsp; | &nbsp;</div>' +
         '<div class="info station-room">' + room + '</div>' +
         '</a>' +
+        '<div class="unregister" style="color:red">X</div>' +
         '</li>');
+    addUnregisterStationListner();
 }
 
 
@@ -273,8 +275,10 @@ function appendNewItem(ul, name, beaconId, room, registeredClass) {
         '<div class="info item-room">' + room + '</div>' +
         '<div class="info searchBtnInfo"><button class="button-primary searchItemBtn">Search</button></div>' +
         '</a>' +
+        '<div class="unregister" style="color:red">X</div>' +
         '</li>');
     addSearchListener();
+    addUnregisterItemListner();
 }
 
 function addSearchListener() {
@@ -306,27 +310,19 @@ function updateSearchedBeacon(uuid) {
   });
 }
 
-function addDeleteListner() {
-  $('.deleteBtn').click(function(e) {
-    e.stopPropagation();
-  })
-  var toDelete = $(this).parent();
-  var list = toDelete.parent();
-  list.removeElementFromList(toDelete);
-}
 
 function addUnregisterItemListner() {
-  $('.unregisterItemBtn').click(function(e) {
-    e.stopPropagation();
-    var uuid = $(this).parent().parent().find('.beaconId').text();
+  $('.unregister').click(function(e) {
+    var uuid = $(this).parent().find('.beaconId').text();
+    $(this).closest("li").remove();
     unregisterItem(uuid);
   })
 }
 
 function addUnregisterStationListner() {
-  $('.unregisterStationBtn').click(function(e) {
-    e.stopPropagation();
-    var ip = $(this).parent().parent().find('.ipAddress').text();
+  $('.unregister').click(function(e) {
+    var ipAddress = $(this).parent().find('.ipAddress').text();
+    $(this).closest("li").remove();
     unregisterStation(ipAddress);
   })
 }
@@ -335,7 +331,10 @@ function unregisterItem(uuid) {
   $.ajax({
     'url': 'unregisterItem',
     'type': 'POST',
-    'success': function(data) {},
+    'data': {uuid: uuid},
+    'success': function(data) {
+
+    },
     'error': function() {
       console.error("Error: can't unregister");
     }
@@ -346,7 +345,10 @@ function unregisterStation(ipAddress) {
   $.ajax({
     'url': 'unregisterStation',
     'type': 'POST',
-    'success': function(data) {},
+    'data': {ipAddress: ipAddress},
+    'success': function(data) {
+
+    },
     'error': function() {
       console.error("Error: can't unregister");
     }

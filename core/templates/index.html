@@ -49,6 +49,7 @@
                                     <div class="info">&nbsp; | &nbsp;</div>
                                     <div class="info station-room">{{ station.room.name }}</div>
                                 </a>
+                                <div class="unregister" style="color:red">X</div>
                             </li>
                             {% endfor %}
                             {% for station in inactive_stations %}
@@ -62,6 +63,7 @@
                                     <div class="info">&nbsp; | &nbsp;</div>
                                     <div class="info station-room">{{ station.room.name }}</div>
                                 </a>
+                                <div class="unregister" style="color:red">X</div>
                             </li>
                             {% endfor %}
                         </ul>
@@ -77,6 +79,7 @@
                                     <div class="info item-room">{{ item.room.name }}</div>
                                     <div class="info searchBtnInfo"><button class="button-primary searchItemBtn">Search</button></div>
                                 </a>
+                                <div class="unregister" style="color:red">X</div>
                             </li>
                             {% endfor %}
                             {% for item in inactive_items %}
@@ -88,6 +91,7 @@
                                     <div class="info item-room">{{ item.room.name }}</div>
                                     <div class="info searchBtnInfo"><button class="button-primary searchItemBtn">Search</button></div>
                                 </a>
+                                <div class="unregister" style="color:red">X</div>
                             </li>
                             {% endfor %}
                         </ul>
